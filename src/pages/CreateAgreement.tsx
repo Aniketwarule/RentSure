@@ -280,7 +280,7 @@ const CreateAgreement = () => {
       };
       
       // Submit to API
-      const response = await axios.post('/api/rental-agreements', agreementData);
+      const response = await axios.post(`${baseUrl}/api/rental-agreements/`, agreementData);
       
       toast({
         title: "Agreement Created",

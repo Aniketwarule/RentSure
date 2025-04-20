@@ -18,7 +18,8 @@ import {
   Pencil,
   Home,
   AlertCircle,
-  IndianRupee
+  IndianRupee,
+  Download
 } from "lucide-react";
 import {
   Table,
@@ -336,7 +337,11 @@ const PropertyDetail = () => {
                           )}
                         </Table>
                       </Card>
-                      <div className="flex justify-end">
+                      <div className="flex space-x-4 justify-end">
+                        <Button onClick={() => navigate(`/create-agreement/${id}`)}>
+                          <Download className="mr-2 h-4 w-4" />
+                          Download Agreement
+                        </Button>
                         <Button onClick={() => navigate(`/create-agreement/${id}`)}>
                           <FileText className="mr-2 h-4 w-4" />
                           New Agreement
