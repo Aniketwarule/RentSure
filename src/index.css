@@ -1,0 +1,212 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 210 100% 50%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 190 95% 45%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 170 90% 45%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 210 100% 50%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 210 100% 50%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 210 100% 50%;
+  }
+
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 220 100% 50%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 220 70% 50%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 210 90% 50%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+    
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 210 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 210 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply backdrop-blur-lg bg-white/10 border border-white/20;
+  }
+  
+  .glass-dark {
+    @apply backdrop-blur-lg bg-black/20 border border-white/10;
+  }
+  
+  .gradient-bg {
+    @apply bg-gradient-to-br from-primary/20 via-background to-accent/20;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent;
+  }
+  
+  .card-hover {
+    @apply transition-all duration-200 hover:shadow-md hover:border-primary/30 hover:bg-primary/5;
+  }
+
+  .button-hover {
+    @apply transition-all duration-200 hover:bg-primary-foreground hover:text-primary hover:border-primary;
+  }
+  
+  .particles-container {
+    @apply pointer-events-none fixed inset-0 z-0 overflow-hidden;
+  }
+  
+  .particle {
+    @apply absolute rounded-full bg-primary/20 opacity-20;
+    animation: particle-flow 15s linear infinite;
+  }
+
+  .hover-card-wrapper {
+    @apply relative transition-all duration-200;
+  }
+  
+  .hover-element {
+    @apply transition-all duration-300 hover:shadow-md hover:bg-primary/10 hover:border-primary/30 transform-gpu;
+  }
+  
+  .hover-button {
+    @apply transition-all duration-200 hover:scale-105 transform-gpu relative overflow-hidden;
+  }
+  
+  .hover-button::after {
+    content: '';
+    @apply absolute inset-0 bg-primary/10 scale-x-0 origin-left transition-transform duration-300 ease-out;
+  }
+  
+  .hover-button:hover::after {
+    @apply scale-x-100;
+  }
+}
+
+@keyframes particle-flow {
+  0% {
+    transform: translateY(-10px) translateX(10px);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(100vh) translateX(-10px);
+    opacity: 0;
+  }
+}
+
+/* Add this for fade in animation if not already present */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.8s ease-out forwards;
+}
+
+.animate-pulse-soft {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Add this for floating animation of the card */
+@keyframes floating {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.animate-floating {
+  animation: floating 6s ease-in-out infinite;
+}
