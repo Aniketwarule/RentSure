@@ -27,11 +27,15 @@ import { baseUrl } from "@/App";
 const Properties = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
-  const [properties, setProperties] = useState([]);
+  const [allProperties, setAllProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [landlordInfo, setLandlordInfo] = useState({
+    userUid: null,
+    userName: null
+  });
 
   // Local fallback images array
   const fallbackImages = [
@@ -43,11 +47,22 @@ const Properties = () => {
   ];
 
   useEffect(() => {
-    const fetchProperties = async () => {
+    // Get landlord information from localStorage
+    const userUid = localStorage.getItem('userUid');
+    const userName = localStorage.getItem('userName');
+    
+    setLandlordInfo({
+      userUid,
+      userName
+    });
+
+    const fetchAllProperties = async () => {
       try {
         setLoading(true);
+        
+        // Fetch all properties
         const response = await axios.get(`${baseUrl}/api/properties/`);
-        setProperties(response.data);
+        setAllProperties(response.data);
         setError(null);
       } catch (err) {
         setError("Failed to fetch properties");
@@ -57,7 +72,7 @@ const Properties = () => {
       }
     };
 
-    fetchProperties();
+    fetchAllProperties();
   }, []);
 
   const getStatusColor = (status) => {
@@ -68,8 +83,13 @@ const Properties = () => {
     }
   };
 
-  // Filter properties based on search query and filters
-  const filteredProperties = properties.filter(property => {
+  // Filter properties to only show those belonging to the current landlord
+  const landlordProperties = allProperties.filter(property => 
+    property.landlordId === landlordInfo.userUid || property.createdBy === landlordInfo.userUid
+  );
+
+  // Further filter properties based on search query and filters
+  const filteredProperties = landlordProperties.filter(property => {
     // Search filter
     const searchMatch = 
       (property.address?.fullAddress?.toLowerCase() || "").includes(searchQuery.toLowerCase()) ||
@@ -132,11 +152,11 @@ const Properties = () => {
     return "Unknown type";
   };
 
-  function handlenavigate(index: number) {
+  function handlenavigate(index) {
     return (event) => {
       event.preventDefault();
       localStorage.setItem('index', index.toString());
-      navigate(`/property/${properties[index]._id}`);
+      navigate(`/property/${filteredProperties[index]._id}`);
     };
   }
 
@@ -149,9 +169,9 @@ const Properties = () => {
             <div className="space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                  <h1 className="text-3xl font-bold">Properties</h1>
+                  <h1 className="text-3xl font-bold">My Properties</h1>
                   <p className="text-muted-foreground">
-                    Manage your rental properties
+                    {landlordInfo.userName ? `Manage properties for ${landlordInfo.userName}` : 'Manage your rental properties'}
                   </p>
                 </div>
                 <Button onClick={() => navigate("/create-property")}>
@@ -180,7 +200,7 @@ const Properties = () => {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">All Status</SelectItem>
-                          <SelectItem value="sold">Active</SelectItem>  
+                          <SelectItem value="active">Active</SelectItem>  
                           <SelectItem value="rented">Rented</SelectItem>
                         </SelectContent>
                       </Select>
@@ -203,6 +223,20 @@ const Properties = () => {
                   </div>
                 </CardContent>
               </Card>
+              
+              {/* User not logged in state */}
+              {!landlordInfo.userUid && !loading && (
+                <Card>
+                  <CardContent className="p-8 text-center">
+                    <p className="text-red-500 mb-4">User information not found. Please log in to view your properties.</p>
+                    <Button 
+                      onClick={() => navigate("/login")}
+                    >
+                      Log In
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
               
               {/* Loading state */}
               {loading && (
@@ -229,7 +263,7 @@ const Properties = () => {
               )}
               
               {/* Properties Grid */}
-              {!loading && !error && (
+              {!loading && !error && landlordInfo.userUid && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {filteredProperties.map((property, index) => (
                     <Card 
@@ -241,6 +275,7 @@ const Properties = () => {
                           <img 
                             src={fallbackImages[index % fallbackImages.length]} 
                             className="w-full h-full object-cover absolute inset-0"
+                            alt={`Property at ${formatAddress(property)}`}
                           />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent group-hover:from-black/90 transition-all">
                           <div className="absolute bottom-4 left-4 right-4">
@@ -285,20 +320,32 @@ const Properties = () => {
               )}
               
               {/* Empty state */}
-              {!loading && !error && filteredProperties.length === 0 && (
+              {!loading && !error && landlordInfo.userUid && filteredProperties.length === 0 && (
                 <Card>
                   <CardContent className="p-8 text-center">
-                    <p className="text-muted-foreground mb-4">No properties found matching your search criteria.</p>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => {
-                        setSearchQuery("");
-                        setStatusFilter("all");
-                        setTypeFilter("all");
-                      }}
-                    >
-                      Clear Filters
-                    </Button>
+                    {landlordProperties.length === 0 ? (
+                      <div>
+                        <p className="text-muted-foreground mb-4">You haven't added any properties yet.</p>
+                        <Button onClick={() => navigate("/create-property")}>
+                          <PlusCircle className="mr-2 h-4 w-4" />
+                          Add Your First Property
+                        </Button>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-muted-foreground mb-4">No properties found matching your search criteria.</p>
+                        <Button 
+                          variant="outline" 
+                          onClick={() => {
+                            setSearchQuery("");
+                            setStatusFilter("all");
+                            setTypeFilter("all");
+                          }}
+                        >
+                          Clear Filters
+                        </Button>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               )}

@@ -56,6 +56,7 @@ const App = () => {
                 <Route path="/maintenance" element={<Maintenance />} />
                 <Route path="/maintenance/new" element={<Maintenance />} />
                 <Route path="/create-property" element={<CreateProperty />} />
+                <Route path="/create-agreement/:id" element={<CreateAgreement />} />
                 <Route path="/create-agreement" element={<CreateAgreement />} />
                 <Route path="/features" element={<Features />} />
                 <Route path="/pricing" element={<Pricing />} />

@@ -46,6 +46,7 @@ const fallbackImages = [
 
 const PropertyDetail = () => {
   const { id } = useParams();
+  localStorage.setItem("propertyId", id);
   const navigate = useNavigate();
   const [property, setProperty] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -68,17 +69,6 @@ const PropertyDetail = () => {
 
     fetchPropertyDetails();
   }, [id]);
-  
-  // Helper function to get the property image (either from DB or fallback)
-  const getPropertyImage = () => {
-    if (property?.images && property.images.length > 0) {
-      return property.images[0];
-    } else if (property?.propertyImages && property.propertyImages.length > 0) {
-      return property.propertyImages[0];
-    } else {
-      return fallbackImages[0];
-    }
-  };
   
   // Helper function to format address
   const formatAddress = () => {
